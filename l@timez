@@ -1,0 +1,53 @@
+// ==UserScript==
+// @name         NYTimes Paywall Bypass
+// @namespace    http://tampermonkey.net/
+// @version      0.4
+// @description  Bypass the New York Times paywall by modifying the page's elements install tampermonkey on firefox, then just copy paste this in and press save, enjoy. 
+// @author       Hav0cMX
+// @match        https://www.nytimes.com/*
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    function removeElementsByClassName(className) {
+        let elements = document.getElementsByClassName(className);
+        while (elements.length > 0) {
+            elements[0].parentNode.removeChild(elements[0]);
+        }
+    }
+
+    function removeElementById(id) {
+        let element = document.getElementById(id);
+        if (element) {
+            element.parentNode.removeChild(element);
+        }
+    }
+
+    window.setTimeout(function() {
+        // Remove known paywall elements
+        removeElementsByClassName('css-mcm29f'); // Paywall scroll blocker
+        removeElementsByClassName('css-gx5sib'); // Paywall shade blocker
+        removeElementById('gateway-content'); // Paywall gateway
+
+        // Attempt to remove any additional elements that might be blocking content
+        removeElementsByClassName('css-1bd8bfl'); // Additional pop-up class
+        removeElementsByClassName('css-3fbowa'); // Potential new class for paywall
+        removeElementsByClassName('css-1dv1kvn'); // Additional potential class
+
+        // Restore scroll functionality to the main content
+        let siteContent = document.getElementById('site-content');
+        if (siteContent) {
+            siteContent.style.position = "static";
+            siteContent.style.overflow = "auto";
+        }
+
+        // Additional scrolling restoration if necessary
+        let body = document.body;
+        if (body) {
+            body.style.overflow = "auto";
+        }
+
+    }, 1000);
+})();
